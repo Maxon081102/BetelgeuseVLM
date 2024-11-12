@@ -8,7 +8,6 @@ from aits import Dataset
 from .config import Config
 from .question import ImageQuestion
 
-
 class MathVistaDataset(Dataset):
     def __init__(
         self,
@@ -26,6 +25,13 @@ class MathVistaDataset(Dataset):
             self.test_data = self.test_data.shuffle(seed=config.random_seed).select(
                 range(config.size)
             )
+        new_test_data = []
+        for task in self.test_data:
+            image_size = task['decoded_image'].size
+            if image_size[0] + image_size[1] < 2200 and image_size[0] > 28 and image_size[1] > 28:
+            # if image_size[0] < 1628 and image_size[1] < 1628:
+                new_test_data.append(task)
+        self.test_data = new_test_data
 
     def prepare_shots_examples(self) -> List[ImageQuestion]:
         assert self.train_data is not None, "No train data"

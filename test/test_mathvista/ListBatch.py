@@ -3,22 +3,30 @@ from typing import Tuple, List
 from aits import Batch
 
 class ListBatch(Batch):
-    def __init__()
+    def __init__(self, answers, question, images):
+        super().__init__()
+        self.answers = answers
+        self.question = question
+        self.images = images
+        
     
     @classmethod
-    def collect_batch(batch_size: int, data: List, **kwargs) -> "ListBatch":
-        self.answers = []
-        self.tasks = []
-        self.images = []
+    def collect_batch(cls, data: List, **kwargs) -> "ListBatch":
+        answers = []
+        questions = []
+        images = []
         for item in data:
-            self.answers.append(item['answer'])
-            self.tasks.append(item['task'])
-            self.images.append(item['image'])
+            # answers.append(item.answer)
+            # question.append(item.question)
+            # images.append(item.image)
+            answers.append(item['answer'])
+            questions.append(item['question'])
+            images.append(item['image'])
+        
+        return cls(answers, questions, images)
 
-    @abstractmethod
     def get_task_batch(self):
-        raise NotImplementedError
+        return [self.question, self.images]
 
-    @abstractmethod
     def get_answer_batch(self):
-        raise NotImplementedError
+        return self.answers

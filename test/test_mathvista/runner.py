@@ -9,18 +9,21 @@ from .config import Config
 from .question import ImageQuestion
 from .dataset import MathVistaDataset
 from .answer_checker import MathVistaChecker
+from .ListBatch import ListBatch
 
 
-class HumanEvalRunner(BenchmarkRunner):
+class ImageBenchRunner(BenchmarkRunner):
     def __init__(self, config: Config):
         super().__init__(config)
         self.dataset = MathVistaDataset(config)
-        self.answer_checker = MathVistaChecker()
+        self.answer_checker = MathVistaChecker(config)
 
     def prepare_data(self, question: ImageQuestion) -> PreparedItem:
-        return BasePreparedItem.prepare_item(question)
+        return {
+            "image": question.image,
+            "answer": question.answer,
+            "question": question.question,
+        }
 
     def collect_batch(self, prepared_data: List[PreparedItem]) -> Batch:
-        return BaseBatch.collect_batch(
-            batch_size=self.config.batch_size, data=prepared_data
-        )
+        return ListBatch.collect_batch(prepared_data)
